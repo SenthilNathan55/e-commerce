@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Home</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        /* padding:0; */
+      }
+      .Navigate {
+        list-style-type: none;
+        /* display: flex; */
+        color: white;
+        font-family: sans-serif;
+        padding: 0.8rem;
+        /* justify-content: space-evenly; */
+        background-image: url("./assets/homenavbar.jpg");
+        /* background-color: #224364; */
+        background-size: cover;
+        align-items: center;
+        margin-top: -10px;
+        height: 25rem;
+        box-shadow: 3px 3px 10px rgb(75, 74, 74);
+      }
+      .Navigate a {
+        text-decoration: none;
+        font-size: large;
+        color: white;
+      }
+      .Lens {
+        width: 1.2rem;
+        margin-bottom: -6px;
+        margin-left: 5px;
+      }
+      .item {
+        margin: 1rem;
+        width: 220px;
+        height: 320px;
+        padding: 1rem;
+        border: 1px solid rgb(149, 140, 140);
+        box-shadow: 10px 10px 50px 0.5px gray;
+        border-radius: 16px;
+        position: relative;
+        /* min-width: 10rem; */
+        /* max-width: fit-content;  */
+      }
+      .item:hover {
+        scale: 1.04;
+      }
+      .price {
+        width: 2rem;
+        height: fit-content;
+      }
+      .item p {
+        font-weight: bold;
+        margin: 2px 0;
+      }
+      .final-price {
+        color: rgb(51, 99, 203);
+      }
+      .Mobile {
+        margin: auto;
+        display: block;
+        width:fit-content;
+        height: 10rem;
+      }
+      button {
+        display: block;
+        position:absolute;
+        bottom:1rem;
+        left:4.5rem;
+        margin: 1rem auto auto auto;
+        border-radius: 10px;
+        padding: 0.2rem;
+        background-color: rgb(53, 120, 202);
+        color: white;
+      }
+       button:active
+       {
+       background-color: #d83220;
+       } 
+   
+      .container {
+        /* background-color: tomato; */
+        display: flex;
+        padding: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      
+      }
+      .ToonStore
+      {
+        position: fixed;
+        bottom:3rem;
+        right:3rem;
+        background-color: white;
+        border: 0.5px solid black;
+        border-radius: 8px;
+        margin-top: 5px;
+        padding: 0.2rem;
+      }
+      .ToonStore:hover
+      {
+        scale:1.05;
+      }
+      .Amount
+      {
+        position: absolute;
+        top:-15px;
+        right:-7px;
+        padding: 2px 3px;
+        border: 0.1px solid gray;
+        border-radius: 10px;
+        background-color: red;
+        color: white;
+      }
+      .Store 
+      {
+      width:2rem;
+      
+      }
+      .Delete
+      {
+        display:none;
+      }
+      .Flexingprice
+      {
+        display: flex;
+        align-items: center; 
+      
+      }
+      .Title
+      {
+        position: absolute;
+        /* border: 1px solid black; */
+        top:0.5rem;
+        left: 2rem;
+        margin-top:1rem;
+      }
+     
+      .FlexingLink
+      {
+        display: flex;
+        justify-content: space-between;
+        position: absolute;
+        top:2rem;
+        right: 3rem;
+      }
+      .Authenticate
+      {
+        margin: 1rem;
+      }
+      .Authenticate:hover
+      {
+        text-shadow: 2px 1px black;
+      }
+      .Title
+      {
+        font-size: 3rem;
+        text-shadow: 4px 4px black;
+      }
+     
+    </style>
+  </head>
+  <body>
+    <nav>
+      <ul class="Navigate">
+        <li><h2 class="Title">Electron Mobiles</h2></li>
+        <!-- <li>
+          <input type="text" placeholder="search items here" /><img
+            class="Lens"
+            src="./assets/magnifying-glass.png"
+          />
+        </li> -->
+        <div class="FlexingLink">
+        <li><a class="Authenticate" id="login" href="./Login.html">Login </a></li>
+        <li><a class="Authenticate" id="signup" href="./SignUp.html">SignUp </a></li>
+        <li><a class="Authenticate" id="logouts" href="./Login.html">Logout </a></li>
+        </div>
+        <li>
+          <div class="ToonStore">
+          <a href="./cart.html"><img class="Store" src="./assets/store.png"/></a>
+            <div id="digit"class="Amount">0</div>
+          </div>
+        </li>
+        </li>
+      </ul>
+    </nav>
+    
+    <div class="container" id="items-container"></div>
+
+   <script type="module">
+      import { item_Card,basket } from "./Components.js";
+      async function displayitems(){
+      const data = await item_Card();
+      document.getElementById("items-container").innerHTML = data;
+      } 
+      displayitems();
+    </script>
+    <script>
+      const basket=JSON.parse(localStorage.getItem("data"))||[];
+      function purchase(id) {
+        let selectedItem = id;
+        let search = basket.find((x) => x.id === selectedItem);
+        if (search === undefined) {
+          basket.push({ id: selectedItem ,quantity:1});
+          localStorage.setItem("data",JSON.stringify(basket));
+        }
+        calculate();
+        console.log(basket);
+      }
+      function calculate()
+      {
+        //  let count=document.getElementById("digit");
+        //  let value=count.innerText;
+        //  value++;
+        let value=basket.length;
+        document.getElementById("digit").innerHTML=value;
+      }
+      calculate();
+      const checktoken=localStorage.getItem("expirationTime");
+      // console.log(checktoken);
+      if(checktoken !== null)
+      {
+        // console.log("display:Logout");
+        document.getElementById("login").style = "display:none";
+        document.getElementById("signup").style = "display:none";
+      }
+      else
+      {
+        // console.log("else part");
+        document.getElementById("logouts").style = "display:none";
+      }
+     
+    </script>
+    <script src="logout.js"></script>
+  </body>
+</html>

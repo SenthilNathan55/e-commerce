@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+      body {
+        background-image: url("./assets/shop.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+
+      .container input {
+        width: 90%;
+        height: 1.5rem;
+      }
+      .container h3 {
+        margin: 0;
+      }
+      label {
+        margin: 0.3em;
+        display: block;
+      }
+      .backdrop {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .bt {
+        margin: 0.5rem auto;
+      }
+      .error {
+        color: red;
+        display: none;
+      }
+      .container {
+        opacity: 0.7;
+        border: 1px solid black;
+        border-radius: 6px;
+        width: fit-content;
+        padding: 2rem;
+        background-color: white;
+      }
+      .Checkname {
+        display: none;
+        color: red;
+      }
+      .Phone {
+        display: none;
+        color: red;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="backdrop">
+      <div class="container">
+        <form method="post">
+          <h3 style="text-align: center">Signin</h3>
+          <label for="uid">User Name:</label>
+          <input type="text" name="Username" id="uid" autofocus required />
+          <p class="Checkname" id="cname"></p>
+          <label for="ph">Phone Number:</label>
+          <input type="tel" name="Phonenumber" id="ph" required />
+          <p class="Phone" id="pno"></p>
+          <label for="pwd">Password:</label>
+          <input type="password" name="password" id="pwd" required />
+          <label for="rpwd">Confirm Password:</label>
+          <input type="password" name="Repeatpassword" id="rpwd" required />
+          <p class="error" id="passwordCheck">paswords doesn't match.</p>
+          <button class="bt">Sign In</button>
+
+          <p>already have an account? <a href="./Login.html">click here </a></p>
+        </form>
+      </div>
+    </div>
+    <script src="tokenmanage.js"></script>
+    <script>
+      const form = document.querySelector("form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        console.log(formData.get("Phonenumber").length);
+        const mobileno = document.getElementById("pno");
+
+        if (formData.get("password") !== formData.get("Repeatpassword")) {
+          document.getElementById("passwordCheck").style = "display:block";
+        } else if (formData.get("Phonenumber").length !== 10) {
+          mobileno.style = "display:block";
+          mobileno.innerHTML = "Phone number must be within 10 digits";
+        } else {
+          const data = {
+            username: formData.get("Username"),
+            number: formData.get("Phonenumber"),
+            password: formData.get("password"),
+          };
+          console.log(data);
+          // console.log(JSON.stringify(data));
+          const response = await fetch("http://localhost:5090/auth/signin", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(data),
+          });
+          const message = await response.json();
+          console.log(message);
+          if (response.status === 401) {
+            document.getElementById("cname").innerHTML = message.message;
+            document.getElementById("cname").style = "display:block";
+          } else if (response.status === 400) {
+            alert("Please Try once again");
+            form.reset();
+          } else {
+            setToken(message);
+            window.location.replace("./Home.html");
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

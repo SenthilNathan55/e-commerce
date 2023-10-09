@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BillSumaary</title>
+    <style>
+      body {
+        background-image: url("assets/billcounter.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+      form {
+        opacity: 0.9;
+        margin: 0;
+        padding: 2rem;
+        line-height: 1.5rem;
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 40px;
+        box-shadow: inset;
+        width: fit-content;
+        height: 500px;
+        overflow: hidden;
+        box-shadow: 10px 10px 2px 3px rgb(68, 67, 67);
+      }
+      .backdrop {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        /* border: 1px solid black; */
+      }
+      form:hover {
+        overflow: scroll;
+      }
+      input {
+        display: block;
+        height: 1.5rem;
+      }
+      textarea {
+        display: block;
+      }
+      .purchase_item {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        /* flex-wrap: wrap; */
+        /* border: 1px solid black; */
+        margin: 1rem 0;
+        margin-left: 5px;
+        width: 23rem;
+        height: fit-content;
+      }
+      .item_image {
+        width: fit-content;
+        height: 7rem;
+        margin-right: 2rem;
+      }
+      .item_description {
+        width: fit-content;
+        line-height: 4px;
+      }
+      .billdiv {
+        width: 23rem;
+        height: 10rem;
+      }
+      #amount {
+        color: rgb(222, 43, 16);
+        font-family: sans-serif;
+        font-size: larger;
+        text-shadow: 1px 1px 4px rgb(194, 191, 191);
+      }
+      .placeorder {
+        position: absolute;
+        padding: 0.4rem 1rem;
+        bottom: 2rem;
+        left: 44rem;
+        font-size: larger;
+        border: 0.5px solid grey;
+        border-radius: 10px;
+        /* box-shadow: 4px 4px 2px 3px rgb(68, 67, 67); */
+      }
+      #adrs {
+        margin-bottom: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="backdrop">
+      <form action="#" method="post">
+        <h2 style="text-align: center">Bill Summary</h2>
+        <label for="uid">Name:</label>
+        <input type="text" size="50" name="username" id="uid" required /><br />
+        <label for="ph">Phone Number: </label>
+        <input type="text" size="50" name="phoneno" id="ph" required /><br />
+        <label for="adrs">Delivery Address:</label>
+        <textarea
+          id="adrs"
+          rows="3"
+          cols="47"
+          name="address"
+          autofocus
+          required
+        ></textarea>
+        <div style="display: flex; align-items: center">
+          <input
+            type="radio"
+            name="paymentMethod"
+            id="delivery"
+            value="cashOnDelivery"
+          />
+          <label for="delivery"> Cash On Delivery</label>
+        </div>
+        <p id="amount"></p>
+        <div class="billdiv" id="purchase_list"></div>
+        <button class="placeorder">place order</button>
+      </form>
+    </div>
+    <script>
+      const payload = JSON.parse(
+        atob(localStorage.getItem("token").split(".")[1])
+      );
+      document.getElementById("uid").value = payload.name;
+      document.getElementById("ph").value = payload.phno;
+
+      document.getElementById("amount").innerHTML =
+        "Total Amount: ₹ " + localStorage.getItem("total");
+
+      const form = document.querySelector("form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        console.log(formData);
+        const data = {
+          username: formData.get("username"),
+          phno: formData.get("phoneno"),
+          address: formData.get("address"),
+        };
+        const response = await fetch("http://localhost:5090/auth/order", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        const message = await response.json();
+        console.log("orderid:", message[0].orderid);
+        const Mybasket = JSON.parse(localStorage.getItem("data"));
+        Mybasket.map(async (k) => {
+          const itemlist = {
+            order_id: message[0].orderid,
+            item_id: k.id,
+            item_quantity: k.quantity,
+          };
+          const solution = await fetch("http://localhost:5090/auth/orderlist", {
+            method: "POST",
+            headers: {
+              "content-type": "application/json",
+            },
+            body: JSON.stringify(itemlist),
+          });
+        });
+        localStorage.removeItem("data");
+        const userConfirmed = window.confirm(
+          "Oder placed Sucessfully . Click OK to go to Home."
+        );
+        if (userConfirmed) {
+          window.location.replace("./Home.html");
+        }
+      });
+    </script>
+    <script type="module">
+      import { bill_item } from "./Components.js";
+      console.log("stated ");
+      async function displayitems() {
+        const data = await bill_item();
+        document.getElementById("purchase_list").innerHTML = data;
+      }
+      displayitems();
+    </script>
+    <script src="logout.js"></script>
+  </body>
+</html>

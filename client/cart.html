@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Add to Cart</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        /* background-color: rgb(237, 225, 225); */
+        background-image: url("./assets/cartbg.jpg");
+        background-size: cover;
+        /* padding:0; */
+      }
+      nav {
+        background-color: aqua;
+      }
+      .Navigate {
+        list-style-type: none;
+        display: flex;
+        justify-content: space-evenly;
+        margin-top: -10px;
+        background-color: #224364;
+        color: white;
+        align-items: center;
+        font-family: sans-serif;
+        padding: 0.8rem;
+      }
+      .Navigate a {
+        text-decoration: none;
+        color: white;
+      }
+      .Lens {
+        width: 1.2rem;
+        margin-bottom: -6px;
+        margin-left: 5px;
+      }
+      .final-price {
+        /* border: 0.3px solid black; */
+        border-radius: 4px;
+        /* display: flex; */
+        justify-content: center;
+        font-weight: bolder;
+        width: 3rem;
+        font-size: large;
+      }
+      .Items {
+        display: flex;
+        justify-content: space-between;
+      }
+      .Total {
+        display: flex;
+        justify-content: space-between;
+      }
+      .Bill {
+        border: 1px solid black;
+        width: 200px;
+        height: fit-content;
+        padding: 1rem;
+        margin: 1rem;
+        grid-area: bill;
+      }
+      .Header {
+        color: rgb(28, 110, 216);
+        grid-area: header;
+        border: 1px solid black;
+        padding: 1rem;
+      }
+      .cart-container {
+        grid-area: cart;
+      }
+      .Footer {
+        grid-area: footer;
+        border-top: 1px solid black;
+        padding: 1rem;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+      }
+      .Continue {
+        grid-area: button;
+        border: 1px solid black;
+        padding: 1rem;
+        text-align: center;
+        background-color: rgba(50, 159, 217, 0.959);
+        color: white;
+      }
+      .Continue a {
+        text-decoration: none;
+      }
+      .Continue a {
+        color: white;
+        font-size: larger;
+        letter-spacing: 1px;
+      }
+
+      .grid-container {
+        display: flex;
+        justify-content: space-between;
+        /* grid-template-areas:
+          "header   bill "
+          "cart  bill"
+          "cart button"; */
+        grid-template-columns: 60% 20%;
+        gap: 10px;
+        background-color: rgb(255, 255, 255);
+        width: fit-content;
+        border: 1px solid black;
+        border-radius: 10px;
+        margin: auto;
+        padding: 20px;
+      }
+      .cart-item {
+        border: 1px solid grey;
+        border-radius: 10px;
+        box-shadow: 5px 5px 30px 0.1px rgb(200, 196, 196);
+        margin: 0.5rem;
+        padding: 1rem;
+        position: relative;
+      }
+      .Description {
+        margin: auto;
+        justify-content: center;
+        font-weight: bolder;
+        padding-bottom: 0.5rem;
+      }
+      .Mobile {
+        /* border: 1px solid black; */
+        padding-top: 4px;
+        margin: 0;
+        height: 10rem;
+      }
+      .Minus {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 1rem;
+      }
+      .Rupee {
+        width: 1rem;
+        height: 1rem;
+        padding-top: 4px;
+      }
+      .backtoHome {
+        position: fixed;
+        bottom: 3rem;
+        right: 3rem;
+        width: 4rem;
+      }
+      .backtoHome:hover {
+        scale: 1.04;
+      }
+      .carticon {
+        width: 2rem;
+        height: 2rem;
+        margin-left: 0.5rem;
+      }
+      .Heading {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+    </style>
+  </head>
+  <body onload="totalAmount()">
+    <!-- <nav>
+      <ul class="Navigate">
+        <li>
+          <a href="./Home.html"><h2>Eelectra Mobiles</h2></a>
+        </li>
+        <li>
+          <input type="text" placeholder="search items here" /><img
+            class="Lens"
+            src="./assets/magnifying-glass.png"
+          />
+        </li>
+        <li><a href="./Login.html">Login </a></li>
+        <li><a href="./SignUp.html">SignUp </a></li>
+      </ul>
+    </nav> -->
+    <div class="Heading">
+      <h1 style="text-align: center">My Cart</h1>
+      <img class="carticon" src="./assets/store.png" />
+    </div>
+    <div class="grid-container">
+      <div id="Clone-Cart" class="cart-container">
+        <!-- <div class="Header"> -->
+        <!-- </div> -->
+      </div>
+      <a href="Home.html"
+        ><img class="backtoHome" src="./assets/home-button.png"
+      /></a>
+      <div class="Bill">
+        <h3>Cart Summary</h3>
+        <div class="Items">
+          <p>Cart Total</p>
+          <p id="calculated-Amount"></p>
+        </div>
+        <div class="Items">
+          <p>Discount</p>
+          <p>0</p>
+        </div>
+        <div class="Total">
+          <p>Total</p>
+          <p id="total-Amount"></p>
+        </div>
+        <div class="Continue">
+          <a href="./billsummary.html">Continue</a>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { item_Cart } from "./Components.js";
+      async function displaycards() {
+        const data = await item_Cart();
+        document.getElementById("Clone-Cart").innerHTML = data;
+        totalAmount();
+      }
+      displaycards();
+
+      let Mybasket = JSON.parse(localStorage.getItem("data")) || [];
+      function removeItem(id) {
+        let Mybasket = JSON.parse(localStorage.getItem("data")) || [];
+        let selectedItem = id;
+        Mybasket = Mybasket.filter((x) => {
+          return x.id !== +selectedItem;
+        });
+        localStorage.setItem("data", JSON.stringify(Mybasket));
+        console.log(Mybasket);
+      }
+      document
+        .getElementById("Clone-Cart")
+        .addEventListener("click", (event) => {
+          console.log(event.target.classList);
+          if (event.target.classList.contains("Minus")) {
+            let variable = event.target
+              .getAttribute("id")
+              .replace("remove-", "");
+            removeItem(variable);
+            totalAmount();
+            displaycards();
+          }
+        });
+    </script>
+
+    <script>
+      function totalAmount() {
+        let total = 0;
+
+        let items = document.getElementsByClassName("Card");
+        for (let item of items) {
+          console.log(item);
+        }
+        let array = Array.from(items);
+        array.forEach((i) => {
+          total +=
+            +i
+              .getElementsByClassName("final-price")[0]
+              .innerHTML.replace(",", "") *
+            +i.getElementsByClassName("QuantityBill")[0].value.replace(",", "");
+        });
+
+        document.getElementById("calculated-Amount").innerHTML = total;
+        document.getElementById("total-Amount").innerHTML = total;
+        localStorage.setItem("total", total);
+      }
+
+      function decrement(id) {
+        let quantity = document.getElementById(id);
+        console.log(quantity);
+        if (quantity.value > 1) {
+          quantity.value--;
+          let basket = JSON.parse(localStorage.getItem("data"));
+          let index = basket.findIndex((x) => x.id === id);
+          basket[index].quantity = quantity.value;
+          storeCart(basket);
+          totalAmount();
+        }
+      }
+      function storeCart(data) {
+        localStorage.setItem("data", JSON.stringify(data));
+      }
+
+      function increment(id) {
+        let quantity = document.getElementById(id);
+        console.log(quantity);
+        quantity.value++;
+        let basket = JSON.parse(localStorage.getItem("data"));
+        let index = basket.findIndex((x) => x.id === id);
+        basket[index].quantity = quantity.value;
+        storeCart(basket);
+        totalAmount();
+      }
+    </script>
+    <script src="logout.js"></script>
+  </body>
+</html>

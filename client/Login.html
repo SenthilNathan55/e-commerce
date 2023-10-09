@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+    <style>
+      body {
+        background-image: url("./assets/shop.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+      .container {
+        opacity: 0.7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        /* align-items: center; */
+        border: 1px solid black;
+        border-radius: 6px;
+        width: fit-content;
+        padding: 2rem;
+        background-color: white;
+      }
+      .container input {
+        width: 90%;
+        height: 1.5rem;
+      }
+      .container h3 {
+        margin: 0;
+      }
+      label {
+        margin: 0.3em;
+        display: block;
+      }
+      .backdrop {
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+      .bt {
+        margin: 0.5rem auto;
+      }
+      .Result {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="backdrop">
+      <div class="container">
+        <form action="" method="post">
+          <h3 style="text-align: center">LOGIN</h3>
+          <label for="uid">User Name:</label>
+          <input type="text" name="Username" id="uid" autofocus required />
+          <label for="pwd">Password:</label>
+          <input type="password" name="password" id="pwd" required />
+          <button class="bt">Login</button>
+          <p>Don't have an account? <a href="./SignUp.html">click here </a></p>
+          <p class="Result" id="answer"></p>
+        </form>
+      </div>
+    </div>
+    <script src="tokenmanage.js"></script>
+    <script>
+      const form = document.querySelector("form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        console.log(formData);
+        const data = {
+          username: formData.get("Username"),
+          password: formData.get("password"),
+        };
+        console.log(data);
+        // console.log(JSON.stringify(data));
+        const response = await fetch("http://localhost:5090/auth/login", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        console.log(response);
+        console.log(response.status);
+        const message = await response.json();
+        if (response.status === 401) {
+          const errMessage = document.getElementById("answer");
+          errMessage.innerHTML = message.message;
+          errMessage.style = "display:block;color:red";
+          return;
+        }
+        if (!response.ok) {
+          return console.log(response);
+        }
+        console.log(message);
+        setToken(message);
+        const payload = JSON.parse(atob(message.token.split(".")[1]));
+        console.log(payload.name, payload.phno);
+        if (payload.userId === 1) {
+          window.location.replace("./Adminhome.html");
+        } else {
+          window.location.replace("./Home.html");
+        }
+      });
+
+      // jwt payload parsing -   atob(token.split(".")[1]);
+    </script>
+  </body>
+</html>

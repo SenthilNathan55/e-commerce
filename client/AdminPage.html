@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin-Page</title>
+    <style>
+      body {
+        background-image: url("./assets/admin.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+      }
+      form {
+        opacity: 0.7;
+        margin: 0;
+        padding: 2rem;
+        line-height: 1.5rem;
+        background-color: white;
+        border: 1px solid black;
+        border-radius: 40px;
+        box-shadow: inset;
+        width: fit-content;
+        box-shadow: 10px 10px 2px 3px rgb(68, 67, 67);
+      }
+      .backdrop {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        /* border: 1px solid black; */
+      }
+      button {
+        padding: 3px;
+        font: sans-serif;
+        margin: 0.5rem 2.5rem;
+        border: 2px solid black;
+        border-radius: 8px;
+        background-color: whitesmoke;
+      }
+      button:hover {
+        background: black;
+        color: white;
+      }
+      input {
+        display: block;
+        height: 1.5rem;
+      }
+      input[type="text"]:hover {
+        border: 2px solid black;
+        border-radius: 2px;
+      }
+      input:focus {
+        border: 1.5px solid black;
+        border-radius: 2px;
+      }
+      label {
+        font-family: sans-serif;
+        font-weight: bolder;
+      }
+      #desc {
+        display: block;
+      }
+      h2 {
+        text-align: center;
+      }
+      button a {
+        text-decoration: none;
+        color: black;
+      }
+      button a:hover {
+        color: white;
+        cursor: default;
+      }
+      .buttons {
+        display: flex;
+        justify-content: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="backdrop">
+      <form action="#" method="post">
+        <h2>New Card</h2>
+        <label for="pname">Name:</label>
+        <input
+          type="text"
+          name="productname"
+          id="pname"
+          size="50"
+          autofocus
+          required
+        /><br />
+        <label for="p-price">Price:</label>
+        <input
+          type="text"
+          name="productprice"
+          id="p-price"
+          size="50"
+          required
+        /><br />
+        <label for="desc">Description:</label>
+        <textarea id="desc" rows="4" cols="47" name="p-description"></textarea
+        ><br />
+        <label for="file-selector">Upload Image:</label>
+        <input type="url" id="file-selector" name="image" />
+        <div class="buttons">
+          <button class="bt">Create Item</button>
+          <button><a href="Adminhome.html">Back to Home</a></button>
+        </div>
+      </form>
+    </div>
+    <script>
+      const form = document.querySelector("form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = {
+          proname: formData.get("productname"),
+          price: formData.get("productprice"),
+          description: formData.get("p-description"),
+          imagelink: formData.get("image"),
+        };
+        console.log(formData.get("image"));
+        const response = await fetch("http://localhost:5090/auth/newcard", {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify(data),
+        });
+        const message = await response.json();
+        console.log(message);
+        alert("Created successfully");
+        form.reset();
+      });
+    </script>
+  </body>
+</html>

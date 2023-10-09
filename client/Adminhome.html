@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AdminHome</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        /* padding:0; */
+      }
+      nav {
+        background-color: aqua;
+      }
+      .Navigate {
+        list-style-type: none;
+        display: flex;
+        color: white;
+        font-family: sans-serif;
+        padding: 0.8rem;
+        justify-content: space-evenly;
+        /* background-color: #224364; */
+        background-image: url("./assets/blue.jpg");
+        background-repeat: no-repeat;
+        background-size: cover;
+        align-items: center;
+        margin-top: -10px;
+        height: 25rem;
+        box-shadow: 3px 3px 10px rgb(75, 74, 74);
+      }
+      .Navigate a {
+        text-decoration: none;
+        color: white;
+      }
+
+      .item {
+        margin: 1rem;
+        width: 220px;
+        padding: 1rem;
+        border: 1px solid rgb(149, 140, 140);
+        box-shadow: 10px 10px 50px 0.5px gray;
+        border-radius: 16px;
+        position: relative;
+      }
+      .item:hover {
+        scale: 1.04;
+      }
+      .price {
+        width: 2rem;
+        height: fit-content;
+      }
+      .item p {
+        font-weight: bold;
+        margin: 2px 0;
+      }
+      .final-price {
+        color: rgb(33, 78, 156);
+        text-shadow: 1px black;
+      }
+      .Mobile {
+        margin: auto;
+        display: block;
+        width: fit-content;
+        height: 10rem;
+      }
+      button {
+        display: none;
+        margin: 1rem auto auto auto;
+        border-radius: 10px;
+        padding: 0.2rem;
+        background-color: rgb(56, 118, 193);
+        color: white;
+      }
+      .container {
+        /* background-color: tomato; */
+        display: flex;
+        padding: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .Amount {
+        position: absolute;
+        top: -15px;
+        right: -7px;
+        padding: 2px 3px;
+        border: 0.1px solid gray;
+        border-radius: 4px;
+        background-color: red;
+        color: white;
+      }
+      .Delete {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        width: 1.5rem;
+      }
+      .Additem {
+        width: 4rem;
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+      }
+      .Additem:hover {
+        scale: 1.04;
+      }
+      h1 {
+        font-size: 7rem;
+        text-shadow: 4px 4px black;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <ul class="Navigate">
+        <li><h1>Dashboard</h1></li>
+      </ul>
+    </nav>
+    <a href="./AdminPage.html"
+      ><img class="Additem" src="./assets/add-button.png"
+    /></a>
+
+    <div class="container" id="items-container"></div>
+    <script type="module">
+      import { item_Card, basket } from "./Components.js";
+      async function displayitems() {
+        const data = await item_Card();
+        document.getElementById("items-container").innerHTML = data;
+      }
+      displayitems();
+      async function deleteRequest(id) {
+        console.log("Delte request");
+        let response = await fetch("http://localhost:5090/remove-card/" + id, {
+          method: "DELETE",
+        });
+        if (response.status === 200) {
+          console.log("Deleted Sucessfully");
+          displayitems();
+        }
+      }
+      document
+        .getElementById("items-container")
+        .addEventListener("click", (event) => {
+          console.log(event.target.classList);
+          if (event.target.classList.contains("Delete")) {
+            let variable = event.target
+              .getAttribute("id")
+              .replace("delete-", "");
+            deleteRequest(variable);
+          }
+        });
+    </script>
+  </body>
+</html>
